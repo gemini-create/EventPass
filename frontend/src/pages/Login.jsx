@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext'
+import PasswordInput from '../components/PasswordInput'
 
 export default function Login() {
   const { login } = useAuth()
@@ -54,12 +55,14 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)} placeholder="admin@eventpass.test" />
           </label>
 
-          <label className="field">
-            Password
-            <input className="input" type="password" required value={password}
-              onChange={(e) => setPassword(e.target.value)} />
-          </label>
-
+          <div className="field">
+            <label htmlFor="pw">Password</label>
+            <PasswordInput id="pw" value={password} onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password" />
+          </div>
+          <Link to="/forgot-password" className="link-btn" style={{ alignSelf: 'flex-end' }}>
+            Forgot password?
+          </Link>
           {error && <div className="alert alert-error" role="alert">{error}</div>}
 
           <button disabled={loading} className="btn btn-primary btn-lg btn-block">

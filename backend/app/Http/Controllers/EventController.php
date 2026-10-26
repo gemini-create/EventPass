@@ -31,40 +31,36 @@ class EventController extends Controller
         return $slug;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        return $request->user()->events()
-            ->withCount('attendees')
-            ->orderBy('event_date')
-            ->get();
+        return Event::withCount('attendees')->orderBy('event_date')->get();
     }
 
     public function store(Request $request)
     {
         $data = $request->validate($this->rules());
         $data['slug'] = $this->makeSlug($data['title']);
+        $data['user_id'] = $request->user()->id;
 
-        $event = $request->user()->events()->create($data);
-
-        return response()->json($event, 201);
+        return response()->json(Event::create($data), 201);
     }
 
-    public function show(Request $request, string $id)
+    public function show(string $id)
     {
-        return $request->user()->events()->withCount('attendees')->findOrFail($id);
+        return Event::withCount('attendees')->findOrFail($id);
     }
 
     public function update(Request $request, string $id)
     {
-        $event = $request->user()->events()->findOrFail($id);
+        $event = Event::findOrFail($id);
         $event->update($request->validate($this->rules()));
 
         return $event;
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy(string $id)
     {
-        $request->user()->events()->findOrFail($id)->delete();
+        Event::findOrFail($id)->delete();
 
         return response()->json(['message' => 'Event deleted.']);
     }

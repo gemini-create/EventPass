@@ -12,11 +12,14 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@eventpass.test',
-            'password' => 'password',
-            'role' => 'admin',
-        ]);
+        User::updateOrCreate(
+            ['email' => env('ADMIN_EMAIL', 'admin@eventpass.test')],
+            [
+                'name' => 'Admin',
+                'password' => env('ADMIN_PASSWORD', 'password'),
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
     }
 }

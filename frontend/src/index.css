@@ -365,6 +365,24 @@ input, select, textarea { font: inherit; color: inherit; }
 .file-link { text-align: center; font-size: 14px; font-weight: 500; color: var(--brand-dark); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .file-link input { display: none; }
 
+/* ============ Password toggle, roles, users ============ */
+.pw-wrap { position: relative; }
+.pw-wrap .input { padding-right: 48px; }
+.pw-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; display: grid; place-items: center;
+  background: none; border: 0; border-radius: 10px; color: #6b7280;
+  transition: color .2s, background .2s;
+}
+.pw-toggle:hover { color: var(--brand-dark); background: rgba(79, 70, 229, .08); }
+
+.badge-off { background: #e5e7eb; color: #374151; }
+.badge-role { background: #e0e7ff; color: var(--brand-deep); text-transform: capitalize; }
+
+.me { padding: 10px 12px; margin-bottom: 6px; font-size: 13px; color: #c7d2fe; }
+.me strong { display: block; color: #fff; font-size: 14px; }
+.me span { text-transform: capitalize; }
+
 /* ============ Responsive ============ */
 @media (max-width: 960px) {
   .stats { grid-template-columns: repeat(2, 1fr); }

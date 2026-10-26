@@ -12,9 +12,7 @@ class CheckInController extends Controller
         $data = $request->validate(['token' => 'required|string|max:40']);
         $user = $request->user();
 
-        $attendee = Attendee::where('token', strtoupper(trim($data['token'])))
-            ->whereHas('event', fn ($q) => $q->where('user_id', $user->id))
-            ->first();
+        $attendee = Attendee::where('token', strtoupper(trim($data['token'])))->first();
 
         if (! $attendee) {
             return response()->json(['status' => 'invalid'], 404);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -9,7 +10,7 @@ class AttendeeController extends Controller
 {
     public function index(Request $request, string $eventId)
     {
-        $event = $request->user()->events()->findOrFail($eventId);
+        $event = Event::findOrFail($eventId);
 
         return $event->attendees()
             ->when($request->query('search'), function ($q, $search) {
@@ -24,9 +25,9 @@ class AttendeeController extends Controller
             ->get();
     }
 
-    public function stats(Request $request, string $eventId)
+    public function stats(string $eventId)
     {
-        $event = $request->user()->events()->findOrFail($eventId);
+        $event = Event::findOrFail($eventId);
 
         $registered = $event->attendees()->count();
         $checkedIn = $event->attendees()->whereNotNull('checked_in_at')->count();
@@ -39,9 +40,9 @@ class AttendeeController extends Controller
         ];
     }
 
-    public function export(Request $request, string $eventId)
+    public function export(string $eventId)
     {
-        $event = $request->user()->events()->findOrFail($eventId);
+        $event = Event::findOrFail($eventId);
         $filename = Str::slug($event->title) . '-attendees.csv';
 
         // stop spreadsheet apps from running cells that start with = + - @
@@ -51,7 +52,7 @@ class AttendeeController extends Controller
 
         return response()->streamDownload(function () use ($attendees, $safe) {
             $out = fopen('php://output', 'w');
-            fwrite($out, "\xEF\xBB\xBF"); // lets Excel read the file as UTF-8
+            fwrite($out, "\xEF\xBB\xBF");
 
             $put = fn (array $row) => fputcsv($out, $row, ',', '"', '');
 

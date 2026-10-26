@@ -1,20 +1,18 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { FiGrid, FiCalendar, FiMaximize, FiUsers, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../AuthContext'
 
 const icons = {
-  dashboard: (<><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></>),
-  calendar: (<><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>),
-  scan: <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10" />,
-  logout: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />,
+  dashboard: FiGrid,
+  calendar: FiCalendar,
+  scan: FiMaximize,
+  users: FiUsers,
+  logout: FiLogOut,
 }
 
 function Icon({ name }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {icons[name]}
-    </svg>
-  )
+  const Component = icons[name]
+  return <Component size={20} aria-hidden="true" />
 }
 
 export function Brand() {
@@ -27,28 +25,33 @@ export function Brand() {
 }
 
 const items = [
-  { to: '/admin', label: 'Dashboard', icon: 'dashboard', end: true },
-  { to: '/admin/events', label: 'Events', icon: 'calendar' },
-  { to: '/admin/checkin', label: 'Check-in', icon: 'scan' },
+  { to: '/admin', label: 'Dashboard', icon: 'dashboard', end: true, roles: ['admin'] },
+  { to: '/admin/events', label: 'Events', icon: 'calendar', roles: ['admin'] },
+  { to: '/admin/checkin', label: 'Check-in', icon: 'scan', roles: ['admin', 'staff'] },
+  { to: '/admin/users', label: 'Team', icon: 'users', roles: ['admin'] },
 ]
 
 export default function AdminLayout() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
+  const visible = items.filter((i) => i.roles.includes(user.role))
 
   return (
     <div className="app">
       <aside className="sidebar">
         <Brand />
         <nav className="nav">
-          {items.map((i) => (
+          {visible.map((i) => (
             <NavLink key={i.to} to={i.to} end={i.end} className="nav-link">
               <Icon name={i.icon} />{i.label}
             </NavLink>
           ))}
         </nav>
-        <button onClick={logout} className="nav-link logout">
-          <Icon name="logout" />Log out
-        </button>
+        <div style={{ marginTop: 'auto' }}>
+          <div className="me"><strong>{user.name}</strong><span>{user.role}</span></div>
+          <button onClick={logout} className="nav-link">
+            <Icon name="logout" />Log out
+          </button>
+        </div>
       </aside>
 
       <div className="content">
@@ -57,7 +60,7 @@ export default function AdminLayout() {
       </div>
 
       <nav className="tabbar">
-        {items.map((i) => (
+        {visible.map((i) => (
           <NavLink key={i.to} to={i.to} end={i.end} className="tab">
             <Icon name={i.icon} />{i.label}
           </NavLink>
